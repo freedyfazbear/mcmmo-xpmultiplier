@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'kr.entree.spigradle' version '2.4.2'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group 'ru.rusekh.xpmultiplier'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url "https://storehouse.okaeri.eu/repository/maven-public/" }
+    maven { url 'https://jitpack.io' }
+    maven { url = "https://repo.mattstudios.me/artifactory/public/" }
+}
+
+dependencies {
+    compileOnly spigot('1.16.5')
+
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+
+    implementation "dev.triumphteam:triumph-gui:3.1.2"
+
+    implementation 'eu.okaeri:okaeri-injector:2.1.0'
+    implementation 'eu.okaeri:okaeri-configs-yaml-bukkit:3.4.2'
+    implementation 'eu.okaeri:okaeri-configs-serdes-bukkit:3.4.2'
+
+    implementation 'com.github.vaperion:blade:2.1.0'
+
+    implementation files("libs/sraka.jar")
+
+    implementation files("libs/mcMMO.jar")
+}
+
+test {
+    useJUnitPlatform()
+}
