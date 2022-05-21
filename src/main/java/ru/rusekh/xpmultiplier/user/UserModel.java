@@ -10,7 +10,7 @@ import java.util.UUID;
 public class UserModel
 {
     @TableColumnInfo(primary = true, name = "playerUUID", serialized = @SerializableTableColumn(UuidValueDeserializer.class))
-    private final UUID uuid;
+    private UUID uuid;
     @TableColumnInfo(nullable = false, name = "boostTime", typed = @TypedTableColumn("BIGINT(20)"))
     private long boostTime;
     @TableColumnInfo(nullable = false, name = "lastBoostClaimedTime", typed = @TypedTableColumn("BIGINT(20)"))
@@ -20,10 +20,12 @@ public class UserModel
 
     public UserModel(UUID uuid) {
         this.uuid = uuid;
-        this.boostTime = System.currentTimeMillis();
-        this.lastBoostClaimedTime = System.currentTimeMillis();
+        this.boostTime = 0L;
+        this.lastBoostClaimedTime = 0L;
         this.historyOfClaims = new HistorySerializer();
     }
+
+    private UserModel() {}
 
     public HistorySerializer getHistoryOfClaims() {
         return historyOfClaims;

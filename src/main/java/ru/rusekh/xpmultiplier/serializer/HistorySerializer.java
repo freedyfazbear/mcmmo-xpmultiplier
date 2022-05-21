@@ -1,13 +1,12 @@
 package ru.rusekh.xpmultiplier.serializer;
 
-import org.bukkit.Bukkit;
 import pl.memexurer.srakadb.sql.mapper.serializer.TableColumnValueDeserializer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,11 +25,20 @@ public class HistorySerializer
 
     public static class Deserializer implements TableColumnValueDeserializer<HistorySerializer> {
 
+        public Deserializer() {}
+
         @Override
         public HistorySerializer deserialize(ResultSet resultSet, String s) throws SQLException {
-            String splitted = resultSet.getString(s);
+            String[] splitted = resultSet.getString(s).split(",");
             HistorySerializer historySerializer = new HistorySerializer();
-            historySerializer.historyOfClaims.add(Date.from(Instant.parse(splitted)));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = null;
+            try {
+                date = dateFormat.parse(splitted[0]);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            historySerializer.historyOfClaims.add(date);
             return historySerializer;
         }
 
@@ -40,13 +48,13 @@ public class HistorySerializer
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             for (Date historyOfClaim : historySerializer.historyOfClaims) {
                 String strDate = dateFormat.format(historyOfClaim);
-                stringBuilder.append(strDate);
+                stringBuilder.append(strDate).append(",");
             }
             if (stringBuilder.isEmpty()) {
                 return "None";
+            } else {
+                return stringBuilder.substring(0, stringBuilder.length() - 1);
             }
-            Bukkit.broadcastMessage(stringBuilder.toString());
-            return stringBuilder.toString();
         }
 
         @Override
