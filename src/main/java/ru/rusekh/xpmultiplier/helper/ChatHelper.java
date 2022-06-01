@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 public final class ChatHelper
@@ -29,7 +30,7 @@ public final class ChatHelper
     public static String parseTime(long time) {
         time -= System.currentTimeMillis();
         if (time <= 0L) {
-            return "now";
+            return "0L";
         }
         final StringBuilder stringBuilder = new StringBuilder();
         final long days = time / 86400000L;
@@ -53,6 +54,61 @@ public final class ChatHelper
             stringBuilder.append(milis).append("ms");
         }
         return stringBuilder.toString();
+    }
+
+    public static long parseTime(String string) {
+        if (string == null || string.isEmpty()) {
+            return 0;
+        }
+
+        Stack<Character> type = new Stack<>();
+        StringBuilder value = new StringBuilder();
+
+        boolean calc = false;
+        long time = 0;
+
+        for (char c : string.toCharArray()) {
+            switch (c) {
+                case 'd':
+                case 'h':
+                case 'm':
+                case 's':
+                    if (!calc) {
+                        type.push(c);
+                    }
+
+                    try {
+                        long i = Integer.parseInt(value.toString());
+                        switch (type.pop()) {
+                            case 'd':
+                                time += i * 86400000L;
+                                break;
+                            case 'h':
+                                time += i * 3600000L;
+                                break;
+                            case 'm':
+                                time += i * 60000L;
+                                break;
+                            case 's':
+                                time += i * 1000L;
+                                break;
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        System.out.println("Unknown number: " + value);
+                        return time;
+                    }
+
+                    type.push(c);
+                    calc = true;
+                    break;
+                default:
+                    value.append(c);
+                    break;
+            }
+        }
+
+        return time;
     }
 
     public static List<String> color(List<String> list) {

@@ -5,8 +5,10 @@ import org.bukkit.plugin.Plugin;
 import pl.memexurer.srakadb.sql.table.DatabaseTable;
 import pl.memexurer.srakadb.sql.table.query.DatabaseFetchQuery;
 import pl.memexurer.srakadb.sql.table.query.DatabaseInsertQuery;
+import ru.rusekh.xpmultiplier.XPMultiplier;
 import ru.rusekh.xpmultiplier.user.UserModel;
 
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,6 +33,11 @@ public class UserRepository
                 future.completeExceptionally(ex);
             }
         });
+        try {
+            databaseTable.getConnection().close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return future;
     }
 
@@ -45,18 +52,34 @@ public class UserRepository
                 future.completeExceptionally(ex);
             }
         });
+        try {
+            databaseTable.getConnection().close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return future;
     }
 
     private UserModel fetchDataModel(UUID uuid) {
-        return new DatabaseFetchQuery()
+        UserModel databaseFetchQuery = new DatabaseFetchQuery()
                 .and(databaseTable.getModelMapper().createQueryPair("uuid", uuid))
                 .executeFetchQuerySingle(databaseTable).orElse(null);
+        try {
+            databaseTable.getConnection().close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return databaseFetchQuery;
     }
 
     private void updateDataModel(UserModel dataModel) {
         new DatabaseInsertQuery(DatabaseInsertQuery.UpdateType.REPLACE)
                 .values(databaseTable.getModelMapper().createQueryPairs(dataModel))
                 .execute(databaseTable);
+        try {
+            databaseTable.getConnection().close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

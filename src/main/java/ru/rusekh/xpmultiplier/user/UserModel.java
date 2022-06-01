@@ -17,15 +17,28 @@ public class UserModel
     private long lastBoostClaimedTime;
     @TableColumnInfo(nullable = false, name = "historyOfClaims", serialized = @SerializableTableColumn(HistorySerializer.Deserializer.class))
     private HistorySerializer historyOfClaims;
+    @TableColumnInfo(nullable = false, typed = @TypedTableColumn("boolean"))
+    private boolean isPaused;
+
 
     public UserModel(UUID uuid) {
         this.uuid = uuid;
         this.boostTime = 0L;
         this.lastBoostClaimedTime = 0L;
         this.historyOfClaims = new HistorySerializer();
+        this.isPaused = false;
     }
 
     private UserModel() {}
+
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setPaused(boolean paused) {
+        isPaused = paused;
+    }
 
     public HistorySerializer getHistoryOfClaims() {
         return historyOfClaims;

@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import ru.rusekh.xpmultiplier.command.BoostCommand;
 import ru.rusekh.xpmultiplier.inventory.BoostInfoInventory;
 import ru.rusekh.xpmultiplier.repository.UserRepository;
+import ru.rusekh.xpmultiplier.runnable.BoostRunnable;
 
 import java.io.File;
 
@@ -53,12 +54,23 @@ public class XPMultiplier extends JavaPlugin
         inventory = new BoostInfoInventory();
 
         repository = new UserRepository(this, dataSource);
+
+        new BoostRunnable().runTaskTimer(this, 0L, 20L);
     }
 
     @Override
     public void onDisable() {
         dataSource.close();
         Blade.of().clearBindings().clearCustomProviderMap().clearCustomProviderMap().build();
+    }
+
+
+    public PluginConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public HikariDataSource getDataSource() {
+        return dataSource;
     }
 
     public BoostInfoInventory getInventory() {
